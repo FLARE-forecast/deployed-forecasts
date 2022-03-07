@@ -1,0 +1,66 @@
+name: set-openwhisk-alarm
+
+# Controls when the action will run.
+on:
+  push:
+    paths:
+      - '**.json'
+
+jobs: 
+  generate-json:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout with branch
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      
+      # Find the changed json file
+      - name: Get specific changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v17.2
+        with:
+          files: |
+            *.json
+      
+      - name: Check if this event is trigger by a deleted commit
+        if: steps.changed-files.outputs.any_deleted == 'true'
+        run:
+          echo "DEL_STATUS=true" >> $GITHUB_ENV
+      
+      # Install ibmcloud cli and set ibmcloud api (target can be set with 'ibmcloud target -o <value> -s <value>' as well)
+      - name: ibmcloud installation
+        if: ${{ env.DEL_STATUS != 'true' }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl jq
+          sudo curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
+          ibmcloud login -u ${{ secrets.IBMCLOUD_USERNAME }} -p ${{ secrets.IBMCLOUD_PASSWORD }} -r ${{ secrets.IBMCLOUD_REGION }}
+          ibmcloud target --cf
+      
+      # Install openwhisk and openwhisk-package-alarms library
+      - name: openwhisk installation
+        if: ${{ env.DEL_STATUS != 'true' }}
+        run: |
+          ibmcloud plugin install Cloud-Functions
+          ibmcloud wsk package get /whisk.system/alarms --summary
+      
+      - name: Set variables from all pushed files and Set Openwhisk alarm
+        if: ${{ env.DEL_STATUS != 'true' }}
+        run: |
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            filetype=".json"
+            filename=${file//$filetype/}
+            echo "alarm_name=$filename" >> $GITHUB_ENV
+            echo "FORECAST_CODE=$(jq -r '."forecast_code"' ./$filename.json)" >> $GITHUB_ENV
+            echo "CONFIG_SET=$(jq -r '."config_set"' ./$filename.json)" >> $GITHUB_ENV
+            echo "FUNCTION=$(jq -r '."function"' ./$filename.json)" >> $GITHUB_ENV
+            echo "USE_HTTPS=$(jq -r '."use_https"' ./$filename.json)" >> $GITHUB_ENV
+            echo "AWS_DEFAULT_REGION=$(jq -r '."aws_default_region"' ./$filename.json)" >> $GITHUB_ENV
+            echo "AWS_S3_ENDPOINT=$(jq -r '."aws_s3_endpoint"' ./$filename.json)" >> $GITHUB_ENV
+            echo "SIM_NAME=$(jq -r '."sim_name"' ./$filename.json)" >> $GITHUB_ENV
+            ibmcloud wsk trigger create ${{ env.alarm_name }} --feed /whisk.system/alarms/alarm --param cron "0 */1 * * *"  --param trigger_payload "{\"forecast_code\":\"${{ env.forecast_code}}\",\"config_set\":\"${{ env.config_set}}\",\"function\":\"${{ env.function}}\",\"use_https\":\"${{ env.use_https}}\",\"aws_default_region\":\"${{ env.aws_default_region}}\",\"aws_s3_endpoint\":\"${{ env.aws_s3_endpoint}}\",\"sim_name\":\"${{ env.sim_name}}\",\"aws_access_key_ID\":\"${{ secrets.AWS_ACCESS_KEY_ID}}\",\"aws_secret_access_key\":\"${{ secrets.AWS_SECRET_ACCESS_KEY}}\"}"
+            ibmcloud wsk rule create ${{ env.alarm_name }}_rule ${{ env.alarm_name }} flare
+          done
