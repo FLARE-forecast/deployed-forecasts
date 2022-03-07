@@ -1,0 +1,9 @@
+{
+  "forecast_code": "https://github.com/FLARE-forecast/FCRE-forecast-code",
+  "config_set": "default",
+  "function": "1",
+  "use_https": "TRUE",
+  "aws_default_region": "",
+  "aws_s3_endpoint": "flare-forecast.org",
+  "sim_name": "test"
+}
