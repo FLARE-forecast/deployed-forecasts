@@ -11,11 +11,11 @@ The json file format needs to follow as below
   "forecast_code": "XXX",
   "config_set": "XXX",
   "function": "1",
-  "configure_run": "configure_run.yml",
+  "configure_run": "XXX.yml",
   "use_https": "XXX",
   "aws_default_region": "XXX",
   "aws_s3_endpoint": "XXX",
-  "schedule": "0 */6 * * *"
+  "schedule": "0 */6 * * *" //Crontab Setting
 }
 ```
 * The "function" variable needs to be set to "1".
