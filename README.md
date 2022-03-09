@@ -3,8 +3,6 @@ JSON Forecast Configuration Files to be Deployed
 
 ## Upload your json file ##
 
-Upload lake json file to this [repo](https://github.com/FLARE-forecast/deployed-forecasts)
-
 The json file format needs to follow as below
 ```json=
 {
