@@ -41,7 +41,6 @@ jobs:
       
       # Install openwhisk and openwhisk-package-alarms library
       - name: openwhisk installation
-        if: ${{ env.DEL_STATUS != 'true' }}
         run: |
           ibmcloud plugin install Cloud-Functions
           ibmcloud wsk package get /whisk.system/alarms --summary
