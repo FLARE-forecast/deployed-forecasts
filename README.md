@@ -15,7 +15,7 @@ The json file format needs to follow as below
   "use_https": "XXX",
   "aws_default_region": "XXX",
   "aws_s3_endpoint": "XXX",
-  "schedule": "0 */6 * * *" //Crontab Setting
+  "schedule": "0 */6 * * *"
 }
 ```
 * The "function" variable needs to be set to "1".
