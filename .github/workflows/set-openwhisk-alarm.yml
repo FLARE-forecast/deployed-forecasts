@@ -32,7 +32,6 @@ jobs:
       
       # Install ibmcloud cli and set ibmcloud api (target can be set with 'ibmcloud target -o <value> -s <value>' as well)
       - name: ibmcloud installation
-        if: ${{ env.DEL_STATUS != 'true' }}
         run: |
           sudo apt-get update
           sudo apt-get install -y curl jq
@@ -46,6 +45,26 @@ jobs:
         run: |
           ibmcloud plugin install Cloud-Functions
           ibmcloud wsk package get /whisk.system/alarms --summary
+      
+      - name: Delete the alarm if it existed
+        continue-on-error: true
+        run: |
+          for file in ${{ steps.changed-files.outputs.all_modified_files }}; do
+            filetype=".json"
+            filename=${file//$filetype/}
+            alarm_name=$filename
+            ibmcloud wsk trigger delete ${alarm_name}
+          done
+      
+      - name: Delete the rule if it existed
+        continue-on-error: true
+        run: |
+          for file in ${{ steps.changed-files.outputs.all_modified_files }}; do
+            filetype=".json"
+            filename=${file//$filetype/}
+            alarm_name=$filename
+            ibmcloud wsk rule delete ${alarm_name}_rule
+          done
       
       - name: Set variables from all pushed files and Set Openwhisk alarm
         if: ${{ env.DEL_STATUS != 'true' }}
@@ -62,6 +81,6 @@ jobs:
             aws_s3_endpoint=$(jq -r '."aws_s3_endpoint"' ./$filename.json)
             sim_name=$(jq -r '."sim_name"' ./$filename.json)
             payload="{\"forecast_code\":\"${forecast_code}\",\"config_set\":\"${config_set}\",\"function\":\"${function}\",\"use_https\":\"${use_https}\",\"aws_default_region\":\"${aws_default_region}\",\"aws_s3_endpoint\":\"${aws_s3_endpoint}\",\"sim_name\":\"${sim_name}\",\"aws_access_key_ID\":\"${{ secrets.AWS_ACCESS_KEY_ID}}\",\"aws_secret_access_key\":\"${{ secrets.AWS_SECRET_ACCESS_KEY}}\"}"
-            ibmcloud wsk trigger create $alarm_name --feed /whisk.system/alarms/alarm --param cron "*/20 * * * *"  --param trigger_payload ${payload}
+            ibmcloud wsk trigger create $alarm_name --feed /whisk.system/alarms/alarm --param cron "0 */6 * * *"  --param trigger_payload ${payload}
             ibmcloud wsk rule create ${alarm_name}_rule $alarm_name flare
           done
