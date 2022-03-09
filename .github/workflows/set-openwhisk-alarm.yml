@@ -80,6 +80,6 @@ jobs:
             aws_s3_endpoint=$(jq -r '."aws_s3_endpoint"' ./$filename.json)
             sim_name=$(jq -r '."sim_name"' ./$filename.json)
             payload="{\"forecast_code\":\"${forecast_code}\",\"config_set\":\"${config_set}\",\"function\":\"${function}\",\"use_https\":\"${use_https}\",\"aws_default_region\":\"${aws_default_region}\",\"aws_s3_endpoint\":\"${aws_s3_endpoint}\",\"sim_name\":\"${sim_name}\",\"aws_access_key_ID\":\"${{ secrets.AWS_ACCESS_KEY_ID}}\",\"aws_secret_access_key\":\"${{ secrets.AWS_SECRET_ACCESS_KEY}}\"}"
-            ibmcloud wsk trigger create $alarm_name --feed /whisk.system/alarms/alarm --param cron "0 */6 * * *"  --param trigger_payload ${payload}
+            ibmcloud wsk trigger create $alarm_name --feed /whisk.system/alarms/alarm --param cron "*/5 * * * *"  --param trigger_payload ${payload}
             ibmcloud wsk rule create ${alarm_name}_rule $alarm_name flare
           done
