@@ -65,5 +65,8 @@ Make sure your repo and branch is correct.
 Add commit message if you want to. Then, click on GREEN "create pull request" button.
 > ![](https://i.imgur.com/NSaFdtW.png)
 
+
+
 If you see this page, it means that you have created the pull request. Once the developer of the repo check with your json file, your pull request will be merged. Also, the ibmcloud will be deployed automatically.
+
 ![](https://i.imgur.com/YSB00nw.png)
