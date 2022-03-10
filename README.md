@@ -39,4 +39,31 @@ Hardwired values for CIBR project team members (make sure you use the pre-config
 
 ## Generate a pull request for your json file ##
 
-TBD
+### Step1
+> Click on the button to fork the repo
+![](https://i.imgur.com/gmonWeV.png)
+
+### Step2
+Make sure top-left corner shows that this repo is forked from original repo.
+> Click on Add file and Create new file buttons to create your own json file.
+>![](https://i.imgur.com/SqQuTKy.png)
+
+### Step3
+> Edit and Commit your own json file with specific format.
+> ![](https://i.imgur.com/lOJq6cf.png)
+
+> ![](https://i.imgur.com/QFYqDpo.png)
+
+### Step 4
+After creating all json files, we are going to create the pull request to the repo.
+> Click on the pull request button from top menu. Then, click on the New Pull Request Button to create the pull request.
+> ![](https://i.imgur.com/2V6FJ4K.png)
+
+Make sure your repo and branch is correct.
+> Click on GREEN "create pull request" button.
+> ![](https://i.imgur.com/lW3dDLR.png)
+Add commit message if you want to. Then, click on GREEN "create pull request" button.
+> ![](https://i.imgur.com/NSaFdtW.png)
+
+If you see this page, it means that you have created the pull request. Once the developer of the repo check with your json file, your pull request will be merged. Also, the ibmcloud will be deployed automatically.
+![](https://i.imgur.com/YSB00nw.png)
