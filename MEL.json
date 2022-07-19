@@ -1,0 +1,12 @@
+{
+  "forecast_code": "https://github.com/melofton/FCRE-forecast-code",
+  "forecast_code_branch": "main",
+  "forecast_code_commit": "8ac599cf3240ab873d42255d191ec43600c745ed",
+  "config_set": "default",
+  "function": "0",
+  "configure_run": "configure_run.yml",
+  "use_https": "TRUE",
+  "aws_default_region": "s3",
+  "aws_s3_endpoint": "flare-forecast.org",
+  "number_of_runs": 365
+}
